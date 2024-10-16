@@ -12,7 +12,12 @@ export const middleware = (req: NextRequest) =>
       pages["/login"],
       pages["/register"],
       apies["/api/register"],
-      apies["/api/login"]
+      apies["/api/login"],
+      apies["/api/set-subscribe"],
+      apies["/api/send-notification"],
+      "/wibu_worker.js",
+      "/icon-192x192.png",
+      "/icon-512x512.png"
     ],
     encodedKey: EnvServer.env.NEXT_PUBLIC_BASE_TOKEN_KEY,
     sessionKey: EnvServer.env.NEXT_PUBLIC_BASE_SESSION_KEY,
@@ -21,5 +26,5 @@ export const middleware = (req: NextRequest) =>
   });
 
 export const config = {
-  matcher: ["/((?!_next|static|favicon.ico).*)"]
+  matcher: ["/((?!_next|static|favicon.ico|manifest).*)"]
 };

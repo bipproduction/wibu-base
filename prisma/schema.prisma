@@ -33,3 +33,8 @@ model UserToken {
   updatedAt DateTime @default(now())
   userId    String
 }
+
+model Subscription {
+  id   String @id @default(cuid())
+  data Json
+}

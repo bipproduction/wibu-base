@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SignJWT } from "jose";
 
 export async function encrypt({

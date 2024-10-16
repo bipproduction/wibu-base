@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { jwtVerify } from "jose";
 
 export async function decrypt({
