@@ -1,5 +1,4 @@
 import { decrypt } from "./decrypt";
-
 export async function verifyToken({
     token,
     encodedKey

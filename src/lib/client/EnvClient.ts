@@ -9,7 +9,7 @@ export class EnvClient {
 
 export function EnvClientProvider({ env }: { env: string }) {
   try {
-    const jsonEnv = JSON.parse(env);
+    const jsonEnv = JSON.parse(env)
     EnvClient.init(jsonEnv);
   } catch (error) {
     console.log(error);

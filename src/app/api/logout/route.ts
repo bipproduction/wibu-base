@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { EnvServer } from "@/lib/server/EnvServer";
-import { sessionDelete } from "@/lib/session_delete";
+import { sessionDelete } from "@/lib/auth/session_delete";
 EnvServer.init(process.env as any);
 export async function POST() {
   sessionDelete({

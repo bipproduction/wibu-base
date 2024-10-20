@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // generate by wibu
-import { decrypt } from "@/lib/decrypt";
+import { decrypt } from "@/lib/auth/decrypt";
 import prisma from "@/lib/prisma";
 import { EnvServer } from "@/lib/server/EnvServer";
 

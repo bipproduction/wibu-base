@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { verifyToken } from "./verify_token";
+import { verifyToken } from "../auth/verify_token";
 
 function setCorsHeaders(res: NextResponse): NextResponse {
   res.headers.set("Access-Control-Allow-Origin", "*");

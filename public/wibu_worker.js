@@ -1,15 +1,31 @@
+/**
+ * @typedef {import('../src/types/PushNotificationDataSend.ts').PushNotificationDataSend} PushNotificationDataSend
+ */
+
+const log = false;
+function printLog(text) {
+
+    if (log) {
+        const stack = new Error().stack;
+        const lineInfo = stack.split('\n')[2]; // Ambil baris ke-2 dari stack trace
+        const match = lineInfo.match(/(\/.*:\d+:\d+)/); // Regex untuk mengambil file, baris, dan kolom
+        const lineNumber = match ? match[1] : 'unknown line';
+        console.log(`[${lineNumber}] ==>`, text);
+    }
+}
 
 self.addEventListener('install', (event) => {
     event.waitUntil(self.skipWaiting());
-    console.log('Service worker installing...');
+    // console.log('Service worker installing...');
+    printLog('Service worker installing...');
 });
 
 self.addEventListener('activate', (event) => {
     event.waitUntil(self.clients.claim());
-    console.log('Service worker activating...');
+    // console.log('Service worker activating...');
+    printLog('Service worker activating...');
 });
 
-let link = "http://localhost:3001";
 self.addEventListener('push', async function (event) {
     // console.log('Push event received:', JSON.stringify(event.data, null, 2));
 
@@ -31,15 +47,11 @@ self.addEventListener('push', async function (event) {
             const data = event.data.json();
             title = data.title || title;
             options.body = data.body || options.body;
-            options.icon = data.icon || options.icon;
-            options.badge = data.badge || options.badge;
-            options.image = data.image || options.image;
             options.data = {
                 ...options.data,
                 ...data,
             };
-
-
+            printLog(JSON.stringify(options, null, 2));
         } catch (e) {
             console.error("Error parsing push event data:", e);
         }
@@ -50,31 +62,51 @@ self.addEventListener('push', async function (event) {
     event.waitUntil(
         (async () => {
             try {
-                // console.log(JSON.stringify(options, null, 2))
-                // Periksa endpoint jika ada dan sama dengan pengirim tidak akan menampilkan notifikasi
-                const myEndpoint = await getEndpointFromIndexedDB();
-                if (myEndpoint && event.data.endpoint === myEndpoint) {
-                    console.log("Notification sent to self, skipping display.");
-                    return;
-                }
-
+                /**
+                 * @type {PushNotificationDataSend}
+                 */
+                const eventData = options.data;
                 // munculkan notifikasi namun hanya ketika tidak ada client yang terdeteksi
                 const clientList = await clients.matchAll({ type: 'window', includeUncontrolled: true });
                 let isClientFocused = false;
 
                 for (const client of clientList) {
+
+                    client.postMessage({
+                        type: 'PUSH_RECEIVED',
+                        title: eventData.title,
+                        body: eventData.body,
+                        variant: eventData.variant,
+                        createdAt: eventData.createdAt,
+                        acceptedAt: Date.now(),
+                    });
+
                     if (client.focused) {
                         isClientFocused = true;
                         break;
                     }
                 }
 
+                // Periksa endpoint jika ada dan sama dengan pengirim tidak akan menampilkan notifikasi
+                const myEndpoint = await getEndpointFromIndexedDB();
+
+
+                if (myEndpoint && eventData.endpoint === myEndpoint) {
+                    // console.log("Notification sent to self, skipping display.");
+                    printLog("Notification sent to self, skipping display.");
+                    return;
+                }
+
+                if (eventData.variant === 'data') {
+                    printLog('type data, skipping display.');
+                    return
+                }
+
                 // Only show notification if no clients are focused
                 if (!isClientFocused) {
                     await self.registration.showNotification(title, options);
-                    console.log('Notification shown.', JSON.stringify(options, null, 2));
                 } else {
-                    console.log('Client is focused, no notification shown.');
+                    printLog('Client is focused, no notification shown.');
                 }
             } catch (err) {
                 console.error("Error showing notification:", err);
@@ -86,15 +118,15 @@ self.addEventListener('push', async function (event) {
 self.addEventListener('notificationclick', function (event) {
 
     const clickedLink = event.notification.data.link;
-    event.notification.close(); 
-   
+    event.notification.close();
+
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-            // for (const client of clientList) {
-            //     if (client.url.includes(clickedLink) && 'focus' in client) {
-            //         return client.focus();
-            //     }
-            // }
+            for (const client of clientList) {
+                if (client.url.includes(clickedLink) && 'focus' in client) {
+                    return client.focus();
+                }
+            }
             if (clients.openWindow) {
                 return clients.openWindow(clickedLink);
             }

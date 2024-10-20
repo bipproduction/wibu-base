@@ -1,24 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest } from "next/server";
-import { apies, pages } from "./lib/routes";
+
+import { apies } from "./lib/routes";
 import { EnvServer } from "./lib/server/EnvServer";
-import { wibuMiddleware } from "./lib/wibu_middleware";
+import { wibuMiddleware } from "./lib/middleware/wibu_middleware";
+import { wibuConfig } from "../wibuConfig";
 
 EnvServer.init(process.env as any);
 export const middleware = (req: NextRequest) =>
   wibuMiddleware(req as any, {
-    publicRoutes: [
-      pages["/"],
-      pages["/login"],
-      pages["/register"],
-      apies["/api/register"],
-      apies["/api/login"],
-      apies["/api/set-subscribe"],
-      apies["/api/send-notification"],
-      "/wibu_worker.js",
-      "/icon-192x192.png",
-      "/icon-512x512.png"
-    ],
+    publicRoutes: wibuConfig.publicRoutes,
     encodedKey: EnvServer.env.NEXT_PUBLIC_BASE_TOKEN_KEY,
     sessionKey: EnvServer.env.NEXT_PUBLIC_BASE_SESSION_KEY,
     validationApiRoute: apies["/api/validate"],
