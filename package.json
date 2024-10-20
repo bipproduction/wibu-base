@@ -1,6 +1,6 @@
 {
   "name": "wibu-base",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "dev": "next dev --experimental-https",
@@ -9,8 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@mantine/core": "^7.13.2",
-    "@mantine/hooks": "^7.13.2",
+    "@hookstate/core": "^4.0.1",
+    "@mantine/core": "^7.13.3",
+    "@mantine/hooks": "^7.13.3",
     "@prisma/client": "^5.20.0",
     "@types/web-push": "^3.6.3",
     "jose": "^5.9.4",
